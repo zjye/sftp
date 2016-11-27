@@ -5,6 +5,11 @@ sftp:
   privateKey:
     file: classpath:META-INF/keys/sftp_rsa
     passphrase: password
+  remote:
+    directory: si.sftp.sample
+    filter: .*.txt
+  local:
+    directory: local-dir
 
 logging:
   leve:

@@ -22,6 +22,7 @@ import com.jcraft.jsch.SftpException;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.integration.file.remote.RemoteFileTemplate;
 import org.springframework.integration.file.remote.SessionCallback;
+import org.zjye.sftp.configuration.SftpProperties;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,26 +33,26 @@ import static org.junit.Assert.fail;
 
 public class SftpTestUtils {
 
-	static void createTestFiles(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
+	static void createTestFiles(RemoteFileTemplate<LsEntry> template, SftpProperties.RemoteFolderSettings remoteFolder, final String... fileNames) {
 		if (template != null) {
-			final ByteArrayInputStream stream = new ByteArrayInputStream("foo".getBytes());
 			template.execute((SessionCallback<LsEntry, Void>) session -> {
                 try {
-                    session.mkdir("si.sftp.sample");
+                    session.mkdir(remoteFolder.getDirectory());
                 }
                 catch (Exception e) {
                     assertThat(e.getMessage(), containsString("failed to create"));
                 }
 				for (String fileName : fileNames) {
-					stream.reset();
-					session.write(stream, "si.sftp.sample/" + fileName);
+                	try(final ByteArrayInputStream stream = new ByteArrayInputStream(fileName.getBytes())) {
+                        session.write(stream, remoteFolder.getDirectory() + "/" + fileName);
+                    }
 				}
                 return null;
             });
 		}
 	}
 
-	static void cleanUp(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
+	static void cleanUp(RemoteFileTemplate<LsEntry> template, SftpProperties.RemoteFolderSettings remoteFolder, final String... fileNames) {
 		if (template != null) {
 			template.execute((SessionCallback<LsEntry, Void>) session -> {
                 // TODO: avoid DFAs with Spring 4.1 (INT-3412)
@@ -59,13 +60,13 @@ public class SftpTestUtils {
                         .getPropertyValue("targetSession")).getPropertyValue("channel");
 				for (String fileName : fileNames) {
 					try {
-						session.remove("si.sftp.sample/" + fileName);
+						session.remove(remoteFolder.getDirectory() + "/" + fileName);
 					} catch (IOException ignored) {
 					}
 				}
                 try {
                     // should be empty
-                    channel.rmdir("si.sftp.sample");
+                    channel.rmdir(remoteFolder.getDirectory());
                 }
                 catch (SftpException e) {
                     fail("Expected remote directory to be empty " + e.getMessage());
@@ -75,7 +76,7 @@ public class SftpTestUtils {
 		}
 	}
 
-	public static boolean fileExists(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
+	public static boolean fileExists(RemoteFileTemplate<LsEntry> template, SftpProperties.RemoteFolderSettings remoteFolder, final String... fileNames) {
 		if (template != null) {
 			return template.execute(session -> {
                 // TODO: avoid DFAs with Spring 4.1 (INT-3412)
@@ -83,7 +84,7 @@ public class SftpTestUtils {
                         .getPropertyValue("targetSession")).getPropertyValue("channel");
 				for (String fileName : fileNames) {
 					try {
-						SftpATTRS stat = channel.stat("si.sftp.sample/" + fileName);
+						SftpATTRS stat = channel.stat(remoteFolder.getDirectory() + "/" + fileName);
 						if (stat == null) {
 							System.out.println("stat returned null for " + fileName);
 							return false;

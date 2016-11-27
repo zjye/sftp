@@ -10,6 +10,7 @@ import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.channel.MessageChannels;
 import org.springframework.integration.dsl.core.Pollers;
+import org.springframework.integration.file.filters.AcceptOnceFileListFilter;
 import org.springframework.integration.file.remote.session.CachingSessionFactory;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
@@ -28,7 +29,7 @@ public class SftpInboundReceiveConfig {
     int serverPort;
 
     @Bean
-    public DefaultSftpSessionFactory defaultSftpSessionFactory() {
+    public SessionFactory<ChannelSftp.LsEntry> sftpSessionFactory() {
         DefaultSftpSessionFactory defaultSftpSessionFactory = new DefaultSftpSessionFactory();
         defaultSftpSessionFactory.setHost(sftpProperties.getHost());
         defaultSftpSessionFactory.setPrivateKey(sftpProperties.getPrivateKey().getFile());
@@ -36,12 +37,7 @@ public class SftpInboundReceiveConfig {
         defaultSftpSessionFactory.setUser(sftpProperties.getUsername());
         defaultSftpSessionFactory.setPort(serverPort);
         defaultSftpSessionFactory.setAllowUnknownKeys(true);
-        return defaultSftpSessionFactory;
-    }
-
-    @Bean
-    public SessionFactory<ChannelSftp.LsEntry> sftpSessionFactory() {
-        return new CachingSessionFactory(defaultSftpSessionFactory());
+        return new CachingSessionFactory(defaultSftpSessionFactory);
     }
 
     @Bean
@@ -49,11 +45,12 @@ public class SftpInboundReceiveConfig {
         return IntegrationFlows
                 .from(s -> s.sftp(sftpSessionFactory())
                                 .preserveTimestamp(true)
-                                .remoteDirectory("si.sftp.sample")
-                                .regexFilter(".*\\.txt$")
-                                .localDirectory(new File("local-dir"))
+                                .remoteDirectory(sftpProperties.getRemote().getDirectory())
+                                .regexFilter(sftpProperties.getRemote().getFilter())
+                                .localDirectory(new File(sftpProperties.getLocal().getDirectory()))
                                 .autoCreateLocalDirectory(true)
                                 .deleteRemoteFiles(false)
+                                .filter(new AcceptOnceFileListFilter<>())
                         ,
                         e -> e.id("sftpInboundAdapter")
                                 .autoStartup(false)

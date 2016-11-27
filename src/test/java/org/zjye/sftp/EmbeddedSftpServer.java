@@ -27,6 +27,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.SocketUtils;
 import org.springframework.util.StreamUtils;
+import org.zjye.sftp.configuration.SftpProperties;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,12 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Collections;
 
 public class EmbeddedSftpServer implements InitializingBean, SmartLifecycle {
+
+    private final SftpProperties sftpProperties;
+
+    public EmbeddedSftpServer(SftpProperties sftpProperties) {
+        this.sftpProperties = sftpProperties;
+    }
 
 	public static final int PORT = SocketUtils.findAvailableTcpPort();
 
@@ -63,7 +70,7 @@ public class EmbeddedSftpServer implements InitializingBean, SmartLifecycle {
 	}
 
 	private PublicKey decodePublicKey() throws Exception {
-		InputStream stream = new ClassPathResource("META-INF/keys/sftp_rsa.pub").getInputStream();
+		InputStream stream = new ClassPathResource(((ClassPathResource) this.sftpProperties.getPrivateKey().getFile()).getPath() + ".pub").getInputStream();
 		byte[] decodeBuffer = Base64.decodeBase64(StreamUtils.copyToByteArray(stream));
 		ByteBuffer bb = ByteBuffer.wrap(decodeBuffer);
 		int len = bb.getInt();

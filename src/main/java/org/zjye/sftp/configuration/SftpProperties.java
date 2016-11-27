@@ -10,6 +10,8 @@ public class SftpProperties {
     private int port;
     private String username;
     private PrivateKey privateKey = new PrivateKey();
+    private RemoteFolderSettings remote = new RemoteFolderSettings();
+    private LocalFolderSettings local = new LocalFolderSettings();
 
     public String getHost() {
         return host;
@@ -41,6 +43,51 @@ public class SftpProperties {
 
     public void setPrivateKey(PrivateKey privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public LocalFolderSettings getLocal() {
+        return local;
+    }
+
+    public void setLocal(LocalFolderSettings local) {
+        this.local = local;
+    }
+
+    public RemoteFolderSettings getRemote() {
+        return remote;
+    }
+
+    public void setRemote(RemoteFolderSettings remote) {
+        this.remote = remote;
+    }
+
+
+    public static class RemoteFolderSettings extends FolderSettings {
+    }
+
+    public static class LocalFolderSettings extends FolderSettings {
+    }
+
+    public static class FolderSettings {
+        private String directory;
+        private String filter = ".*";
+
+        public String getDirectory() {
+            return directory;
+        }
+
+        public void setDirectory(String directory) {
+            this.directory = directory;
+        }
+
+        public String getFilter() {
+            return filter;
+        }
+
+        public void setFilter(String filter) {
+            this.filter = filter;
+        }
+
     }
 
     public static class PrivateKey{

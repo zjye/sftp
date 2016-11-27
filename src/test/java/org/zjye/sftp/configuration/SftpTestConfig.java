@@ -21,7 +21,7 @@ public class SftpTestConfig {
 
     @Bean
     public EmbeddedSftpServer embeddedSftpServer() {
-        EmbeddedSftpServer embeddedSftpServer = new EmbeddedSftpServer();
+        EmbeddedSftpServer embeddedSftpServer = new EmbeddedSftpServer(sftpProperties);
         embeddedSftpServer.setPort(serverPort());
         return embeddedSftpServer;
     }
