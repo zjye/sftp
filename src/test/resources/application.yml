@@ -1,0 +1,7 @@
+sftp:
+  host: localhost
+  port: -1
+  username: user
+  privateKey:
+    file: classpath:META-INF/keys/sftp_rsa
+    passphrase: password
