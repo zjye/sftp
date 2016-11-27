@@ -29,38 +29,36 @@ public class ReadConfigTest {
     ApplicationContext context;
 
     @Test
-    public void runDemo(){
+    public void runDemo() {
         RemoteFileTemplate<LsEntry> template = null;
         String file1 = "a.txt";
         String file2 = "b.txt";
         String file3 = "c.bar";
         new File("local-dir", file1).delete();
         new File("local-dir", file2).delete();
-        try {
-            PollableChannel localFileChannel = context.getBean("receiveChannel", PollableChannel.class);
-            @SuppressWarnings("unchecked")
-            SessionFactory<LsEntry> sessionFactory = context.getBean(CachingSessionFactory.class);
-            template = new RemoteFileTemplate<LsEntry>(sessionFactory);
-            SftpTestUtils.createTestFiles(template, file1, file2, file3);
+        PollableChannel localFileChannel = context.getBean("receiveChannel", PollableChannel.class);
+        @SuppressWarnings("unchecked")
+        SessionFactory<LsEntry> sessionFactory = context.getBean(CachingSessionFactory.class);
+        template = new RemoteFileTemplate<>(sessionFactory);
+        SftpTestUtils.createTestFiles(template, file1, file2, file3);
 
-            SourcePollingChannelAdapter adapter = context.getBean(SourcePollingChannelAdapter.class);
-            adapter.start();
+        SourcePollingChannelAdapter adapter = context.getBean(SourcePollingChannelAdapter.class);
+        adapter.start();
 
-            Message<?> received = localFileChannel.receive();
-            assertNotNull("Expected file", received);
-            System.out.println("Received first file message: " + received);
-            received = localFileChannel.receive();
-            assertNotNull("Expected file", received);
-            System.out.println("Received second file message: " + received);
-            received = localFileChannel.receive(1000);
-            assertNull("Expected null", received);
-            System.out.println("No third file was received as expected");
-        }
-        finally {
-            SftpTestUtils.cleanUp(template, file1, file2, file3);
-            assertTrue("Could note delete retrieved file", new File("local-dir", file1).delete());
-            assertTrue("Could note delete retrieved file", new File("local-dir", file2).delete());
-        }
+        Message<?> received = localFileChannel.receive();
+        assertNotNull("Expected file", received);
+        System.out.println("Received first file message: " + received);
+        received = localFileChannel.receive();
+        assertNotNull("Expected file", received);
+        System.out.println("Received second file message: " + received);
+        received = localFileChannel.receive(1000);
+        assertNull("Expected null", received);
+        System.out.println("No third file was received as expected");
+
+        SftpTestUtils.cleanUp(template, file1, file2, file3);
+        assertTrue("Could note delete retrieved file", new File("local-dir", file1).delete());
+        assertTrue("Could note delete retrieved file", new File("local-dir", file2).delete());
+
     }
 
 }

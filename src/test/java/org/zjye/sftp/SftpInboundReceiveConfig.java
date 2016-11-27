@@ -10,6 +10,7 @@ import org.springframework.integration.annotation.InboundChannelAdapter;
 import org.springframework.integration.annotation.Poller;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.QueueChannel;
+import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.file.filters.AcceptOnceFileListFilter;
 import org.springframework.integration.file.remote.session.CachingSessionFactory;
@@ -24,28 +25,32 @@ import java.io.File;
 
 @Configuration
 @ImportResource({"/META-INF/spring/integration/SftpInboundReceiveSample-context-config.xml"})
+//@EnableIntegration
 @EnableConfigurationProperties({SftpProperties.class})
 public class SftpInboundReceiveConfig {
 //
-//    @Autowired
-//    SftpProperties sftpProperties;
+    @Autowired
+    SftpProperties sftpProperties;
 //
-//    @Bean
-//    public DefaultSftpSessionFactory defaultSftpSessionFactory() {
-//        DefaultSftpSessionFactory defaultSftpSessionFactory = new DefaultSftpSessionFactory();
-//        defaultSftpSessionFactory.setHost(sftpProperties.getHost());
-//        defaultSftpSessionFactory.setPrivateKey(sftpProperties.getPrivateKey().getFile());
-//        defaultSftpSessionFactory.setPrivateKeyPassphrase(sftpProperties.getPrivateKey().getPassphrase());
-//        defaultSftpSessionFactory.setUser(sftpProperties.getUsername());
-//        defaultSftpSessionFactory.setPort(serverPort());
-//        defaultSftpSessionFactory.setAllowUnknownKeys(true);
-//        return defaultSftpSessionFactory;
-//    }
-//
-//    @Bean
-//    public CachingSessionFactory sftpSessionFactory() {
-//        return new CachingSessionFactory(defaultSftpSessionFactory());
-//    }
+    @Autowired
+    int serverPort;
+
+    @Bean
+    public DefaultSftpSessionFactory defaultSftpSessionFactory() {
+        DefaultSftpSessionFactory defaultSftpSessionFactory = new DefaultSftpSessionFactory();
+        defaultSftpSessionFactory.setHost(sftpProperties.getHost());
+        defaultSftpSessionFactory.setPrivateKey(sftpProperties.getPrivateKey().getFile());
+        defaultSftpSessionFactory.setPrivateKeyPassphrase(sftpProperties.getPrivateKey().getPassphrase());
+        defaultSftpSessionFactory.setUser(sftpProperties.getUsername());
+        defaultSftpSessionFactory.setPort(serverPort);
+        defaultSftpSessionFactory.setAllowUnknownKeys(true);
+        return defaultSftpSessionFactory;
+    }
+
+    @Bean
+    public CachingSessionFactory sftpSessionFactory() {
+        return new CachingSessionFactory(defaultSftpSessionFactory());
+    }
 //
 //
 //    @Bean
@@ -72,23 +77,12 @@ public class SftpInboundReceiveConfig {
 //        return fileSynchronizer;
 //    }
 //
-//    @Bean
-//    public EmbeddedSftpServer embeddedSftpServer() {
-//        EmbeddedSftpServer embeddedSftpServer = new EmbeddedSftpServer();
-//        embeddedSftpServer.setPort(serverPort());
-//        return embeddedSftpServer;
-//    }
 //
 
 //
-//    @Bean
-//    public MessageChannel receiveChannel() {
-//        return new QueueChannel();
-//    }
-//
-//    @Bean
-//    @ServiceActivator(inputChannel = "sftpInbondAdapter")
-//    public MessageHandler handler() {
-//        return message -> System.out.println(message.getPayload());
-//    }
+    @Bean
+    public MessageChannel receiveChannel() {
+        return new QueueChannel();
+    }
+
 }

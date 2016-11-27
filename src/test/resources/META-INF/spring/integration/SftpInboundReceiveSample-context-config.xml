@@ -15,22 +15,6 @@
 	</bean>
 
 	<context:property-placeholder properties-ref="yamlProperties"/>
-
-
-	<bean id="sftpSessionFactory" class="org.springframework.integration.file.remote.session.CachingSessionFactory">
-		<constructor-arg ref="defaultSftpSessionFactory" />
-	</bean>
-
-	<bean id="defaultSftpSessionFactory"
-			class="org.springframework.integration.sftp.session.DefaultSftpSessionFactory">
-		<property name="host" value="${sftp.host}"/>
-		<property name="privateKey" value="${sftp.privateKey.file}"/>
-		<property name="privateKeyPassphrase" value="${sftp.privateKey.passphrase}"/>
-		<property name="port" value="#{serverPort}"/>
-		<property name="user" value="${sftp.username}"/>
-		<property name="allowUnknownKeys" value="true"/>
-	</bean>
-
 	<int-sftp:inbound-channel-adapter id="sftpInbondAdapter"
 			auto-startup="false"
 			channel="receiveChannel"
