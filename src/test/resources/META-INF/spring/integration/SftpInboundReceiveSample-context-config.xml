@@ -10,11 +10,6 @@
 	   http://www.springframework.org/schema/context
 	   http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<bean id="yamlProperties" class="org.springframework.beans.factory.config.YamlPropertiesFactoryBean">
-		<property name="resources" value="classpath:application.yml"/>
-	</bean>
-
-	<context:property-placeholder properties-ref="yamlProperties"/>
 	<int-sftp:inbound-channel-adapter id="sftpInbondAdapter"
 			auto-startup="false"
 			channel="receiveChannel"

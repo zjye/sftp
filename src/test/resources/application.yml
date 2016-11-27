@@ -5,3 +5,7 @@ sftp:
   privateKey:
     file: classpath:META-INF/keys/sftp_rsa
     passphrase: password
+
+logging:
+  leve:
+    root: TRACE
