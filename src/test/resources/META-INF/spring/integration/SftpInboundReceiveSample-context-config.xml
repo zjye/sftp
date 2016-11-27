@@ -27,8 +27,4 @@
 		<int:poller fixed-rate="1000" max-messages-per-poll="1"/>
 	</int-sftp:inbound-channel-adapter>
 
-	<int:channel id="receiveChannel">
-		<int:queue/>
-	</int:channel>
-
 </beans>
