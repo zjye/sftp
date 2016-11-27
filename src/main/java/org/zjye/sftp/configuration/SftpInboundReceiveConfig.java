@@ -1,32 +1,25 @@
-package org.zjye.sftp;
+package org.zjye.sftp.configuration;
 
 import com.jcraft.jsch.ChannelSftp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.integration.annotation.IntegrationComponentScan;
-import org.springframework.integration.channel.QueueChannel;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.channel.MessageChannels;
-import org.springframework.integration.dsl.core.PollerSpec;
 import org.springframework.integration.dsl.core.Pollers;
 import org.springframework.integration.file.remote.session.CachingSessionFactory;
 import org.springframework.integration.file.remote.session.SessionFactory;
-import org.springframework.integration.scheduling.PollerMetadata;
 import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.PollableChannel;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
-
+@Configuration
 @EnableIntegration
 @EnableConfigurationProperties({SftpProperties.class})
-public class SftpInboundReceiveConfigFlow {
+public class SftpInboundReceiveConfig {
 
     @Autowired
     SftpProperties sftpProperties;

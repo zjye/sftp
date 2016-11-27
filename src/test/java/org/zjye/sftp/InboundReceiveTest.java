@@ -6,8 +6,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.endpoint.SourcePollingChannelAdapter;
 import org.springframework.integration.file.remote.RemoteFileTemplate;
 import org.springframework.integration.file.remote.session.CachingSessionFactory;
@@ -23,19 +21,20 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {TestContext.class})
-public class ReadConfigTest {
+public class InboundReceiveTest {
 
     @Autowired
     ApplicationContext context;
 
     @Test
-    public void runDemo() {
+    public void should_receive_file() {
         RemoteFileTemplate<LsEntry> template = null;
         String file1 = "a.txt";
         String file2 = "b.txt";
         String file3 = "c.bar";
-        new File("local-dir", file1).delete();
-        new File("local-dir", file2).delete();
+        assertFalse("could not delete existing file", new File("local-dir", file1).delete());
+        assertFalse("could not delete existing file", new File("local-dir", file2).delete());
+
         PollableChannel localFileChannel = context.getBean("receiveChannel", PollableChannel.class);
         @SuppressWarnings("unchecked")
         SessionFactory<LsEntry> sessionFactory = context.getBean(CachingSessionFactory.class);
@@ -58,7 +57,6 @@ public class ReadConfigTest {
         SftpTestUtils.cleanUp(template, file1, file2, file3);
         assertTrue("Could note delete retrieved file", new File("local-dir", file1).delete());
         assertTrue("Could note delete retrieved file", new File("local-dir", file2).delete());
-
     }
 
 }

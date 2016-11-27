@@ -17,6 +17,7 @@
     <properties>
         <java.version>1.8</java.version>
         <spring.integration.version>4.3.5.RELEASE</spring.integration.version>
+        <spring.integration.dsl.version>1.2.1.RELEASE</spring.integration.dsl.version>
     </properties>
     <dependencies>
         <dependency>
@@ -30,23 +31,23 @@
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-java-dsl</artifactId>
-            <version>1.2.1.RELEASE</version>
+            <version>${spring.integration.dsl.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.integration</groupId>
-            <artifactId>spring-integration-core</artifactId>
-            <version>${spring.integration.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.integration</groupId>
-            <artifactId>spring-integration-file</artifactId>
-            <version>${spring.integration.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.integration</groupId>
-            <artifactId>spring-integration-stream</artifactId>
-            <version>${spring.integration.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.integration</groupId>-->
+            <!--<artifactId>spring-integration-core</artifactId>-->
+            <!--<version>${spring.integration.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.integration</groupId>-->
+            <!--<artifactId>spring-integration-file</artifactId>-->
+            <!--<version>${spring.integration.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.integration</groupId>-->
+            <!--<artifactId>spring-integration-stream</artifactId>-->
+            <!--<version>${spring.integration.version}</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-sftp</artifactId>

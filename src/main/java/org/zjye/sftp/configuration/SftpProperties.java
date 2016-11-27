@@ -1,4 +1,4 @@
-package org.zjye.sftp;
+package org.zjye.sftp.configuration;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;

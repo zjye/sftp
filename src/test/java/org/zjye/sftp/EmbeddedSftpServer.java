@@ -17,13 +17,9 @@
 package org.zjye.sftp;
 
 import org.apache.sshd.SshServer;
-import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
 import org.apache.sshd.common.util.Base64;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.server.sftp.SftpSubsystem;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.SmartLifecycle;
@@ -41,9 +37,6 @@ import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Collections;
 
-/**
- * @author Artem Bilan
- */
 public class EmbeddedSftpServer implements InitializingBean, SmartLifecycle {
 
 	public static final int PORT = SocketUtils.findAvailableTcpPort();
@@ -61,17 +54,10 @@ public class EmbeddedSftpServer implements InitializingBean, SmartLifecycle {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		final PublicKey allowedKey = decodePublicKey();
-		this.server.setPublickeyAuthenticator(new PublickeyAuthenticator() {
-
-			@Override
-			public boolean authenticate(String username, PublicKey key, ServerSession session) {
-				return key.equals(allowedKey);
-			}
-
-		});
+		this.server.setPublickeyAuthenticator((username, key, session) -> key.equals(allowedKey));
 		this.server.setPort(this.port);
 		this.server.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("hostkey.ser"));
-		this.server.setSubsystemFactories(Collections.<NamedFactory<Command>>singletonList(new SftpSubsystem.Factory()));
+		this.server.setSubsystemFactories(Collections.singletonList(new SftpSubsystem.Factory()));
 		final String virtualDir = new FileSystemResource("").getFile().getAbsolutePath();
 		server.setFileSystemFactory(new VirtualFileSystemFactory(virtualDir));
 	}
