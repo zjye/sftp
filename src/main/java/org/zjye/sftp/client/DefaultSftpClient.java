@@ -8,26 +8,26 @@ import org.springframework.messaging.PollableChannel;
 import java.io.File;
 import java.util.Optional;
 
+
 public class DefaultSftpClient implements SftpClient {
-    private final MessageChannel channel;
-    private final PollableChannel pollableChannel;
+    private final MessageChannel outputChannel;
+    private final PollableChannel inputChannel;
 
-    public DefaultSftpClient(MessageChannel channel,
-                             PollableChannel pollableChannel){
-        this.channel = channel;
-        this.pollableChannel = pollableChannel;
+    public DefaultSftpClient(MessageChannel outputChannel,
+                             PollableChannel inputChannel){
+        this.outputChannel = outputChannel;
+        this.inputChannel = inputChannel;
     }
-
 
     @Override
     public void upload(File file) {
         final Message<File> message = MessageBuilder.withPayload(file).build();
-        channel.send(message);
+        outputChannel.send(message);
     }
 
     @Override
     public Optional<File> download() {
-        Message<?> message = pollableChannel.receive(2000);
+        Message<?> message = inputChannel.receive(2000);
         if(message == null) return  Optional.empty();
 
         return Optional.of((File)message.getPayload());

@@ -71,6 +71,7 @@ public class OutboundTransferTest {
     public void cleanup() {
         try {
             FileUtils.cleanDirectory(new File(testDirectory));
+            FileUtils.cleanDirectory(new File(sftpProperties.getLocal().getDirectory()));
             FileUtils.cleanDirectory(new File(sftpProperties.getRemote().getDirectory()));
         } catch (Exception ex) {
             System.out.println("failed to cleanup" + ex.getMessage());

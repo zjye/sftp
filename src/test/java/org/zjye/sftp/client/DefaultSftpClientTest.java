@@ -7,13 +7,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.PollableChannel;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.zjye.sftp.SftpTestUtils;
 import org.zjye.sftp.TestContext;
-import org.zjye.sftp.configuration.SftpCommonConfig;
 import org.zjye.sftp.configuration.SftpProperties;
 
 import java.io.File;
@@ -23,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasItemInArray;
 import static org.junit.Assert.*;
 
@@ -36,9 +33,10 @@ public class DefaultSftpClientTest {
     @Autowired
     SftpTestUtils sftpTestUtils;
     @Autowired
-    ApplicationContext context;
+    SftpClient sftpClient;
 
     final String testDirectory = "local-test-dir";
+
 
     @Test
     public void should_upload_file() throws Exception {
@@ -51,10 +49,6 @@ public class DefaultSftpClientTest {
         File localFile = new File(sourceFile);
 
         assertTrue("failed to create test file", localFile.createNewFile());
-
-        DefaultSftpClient sftpClient = new DefaultSftpClient(
-                context.getBean(SftpCommonConfig.OUTPUT_CHANNEL, MessageChannel.class),
-                context.getBean(SftpCommonConfig.INPUT_CHANNEL, PollableChannel.class));
 
         // act
         sftpClient.upload(localFile);
@@ -75,10 +69,6 @@ public class DefaultSftpClientTest {
 
         sftpTestUtils.createTestFiles(file1, file2, fileExcluded);
 
-        DefaultSftpClient sftpClient = new DefaultSftpClient(
-                context.getBean(SftpCommonConfig.OUTPUT_CHANNEL, MessageChannel.class),
-                context.getBean(SftpCommonConfig.INPUT_CHANNEL, PollableChannel.class));
-
         List<File> downloadedFiles = new ArrayList<>();
 
         // act
@@ -90,7 +80,7 @@ public class DefaultSftpClientTest {
         }
 
         // assert
-        assertEquals(2, downloadedFiles.size());
+        assertThat(downloadedFiles.size(), greaterThanOrEqualTo(2));
         assertThat(downloadedFiles.stream().map(File::getName).toArray(), hasItemInArray(file1));
         assertThat(downloadedFiles.stream().map(File::getName).toArray(), hasItemInArray(file2));
     }
@@ -101,6 +91,7 @@ public class DefaultSftpClientTest {
     public void cleanup() {
         try {
             FileUtils.cleanDirectory(new File(testDirectory));
+            FileUtils.cleanDirectory(new File(sftpProperties.getLocal().getDirectory()));
             FileUtils.cleanDirectory(new File(sftpProperties.getRemote().getDirectory()));
         } catch (Exception ex) {
             System.out.println("failed to cleanup" + ex.getMessage());

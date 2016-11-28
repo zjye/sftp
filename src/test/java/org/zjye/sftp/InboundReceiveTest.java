@@ -65,8 +65,7 @@ public class InboundReceiveTest {
             File file = (File) received.getPayload();
             assertNotEquals("aba", FilenameUtils.getExtension(file.getName()));
             assertEquals("txt", FilenameUtils.getExtension(file.getName()));
-            assertTrue("Could not delete retrieved file", file.delete());
-            received = localFileChannel.receive(2000);
+            received = localFileChannel.receive(1000);
             if (received != null) count++;
         }
 
