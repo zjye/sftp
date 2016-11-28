@@ -35,7 +35,7 @@ public class SftpInboundReceiveConfig {
                                 .filter(new AcceptOnceFileListFilter<>())
                         ,
                         e -> e.id("sftpInboundAdapter")
-                                .autoStartup(false)
+                                .autoStartup(true)
                                 .poller(Pollers
                                         .fixedRate(1000)
                                         .maxMessagesPerPoll(1)

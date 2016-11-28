@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.integration.endpoint.SourcePollingChannelAdapter;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -50,9 +49,6 @@ public class InboundReceiveTest {
 
         PollableChannel localFileChannel = context.getBean("receiveChannel", PollableChannel.class);
         sftpTestUtils.createTestFiles(file1, file2, fileExcluded);
-
-        SourcePollingChannelAdapter adapter = context.getBean(SourcePollingChannelAdapter.class);
-        adapter.start();
 
         // act
         Message<?> received = localFileChannel.receive();

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.PollableChannel;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.zjye.sftp.SftpTestUtils;
 import org.zjye.sftp.TestContext;
@@ -16,9 +17,13 @@ import org.zjye.sftp.configuration.SftpProperties;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.hasItemInArray;
+import static org.junit.Assert.*;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -46,7 +51,9 @@ public class DefaultSftpClientTest {
 
         assertTrue("failed to create test file", localFile.createNewFile());
 
-        DefaultSftpClient sftpClient = new DefaultSftpClient(context.getBean("inputChannel", MessageChannel.class));
+        DefaultSftpClient sftpClient = new DefaultSftpClient(
+                context.getBean("inputChannel", MessageChannel.class),
+                context.getBean("receiveChannel", PollableChannel.class));
 
         // act
         sftpClient.upload(localFile);
@@ -54,6 +61,37 @@ public class DefaultSftpClientTest {
         // assert
         Thread.sleep(2000);
         assertTrue(sftpTestUtils.fileExists(destinationFileName));
+    }
+
+    @Test
+    public void should_download_file() throws Exception {
+        // arrange
+        String file1 = String.format("%s.txt", UUID.randomUUID().toString());
+        String file2 = String.format("%s.txt", UUID.randomUUID().toString());
+        String fileExcluded = String.format("%s.aba", UUID.randomUUID().toString());
+        assertFalse("could not delete existing file", new File(sftpProperties.getLocal().getDirectory(), file1).delete());
+        assertFalse("could not delete existing file", new File(sftpProperties.getLocal().getDirectory(), file2).delete());
+
+        sftpTestUtils.createTestFiles(file1, file2, fileExcluded);
+
+        DefaultSftpClient sftpClient = new DefaultSftpClient(
+                context.getBean("inputChannel", MessageChannel.class),
+                context.getBean("receiveChannel", PollableChannel.class));
+
+        List<File> downloadedFiles = new ArrayList<>();
+
+        // act
+        Optional<File> file = sftpClient.download();
+
+        while (file.isPresent()) {
+            downloadedFiles.add(file.get());
+            file = sftpClient.download();
+        }
+
+        // assert
+        assertEquals(2, downloadedFiles.size());
+        assertThat(downloadedFiles.stream().map(File::getName).toArray(), hasItemInArray(file1));
+        assertThat(downloadedFiles.stream().map(File::getName).toArray(), hasItemInArray(file2));
     }
 
 
