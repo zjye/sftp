@@ -8,6 +8,7 @@ sftp:
   remote:
     directory: si.sftp.sample
     filter: .*.txt
+    output-file-name: payload.getName() + '_foo'
   local:
     directory: local-dir
 

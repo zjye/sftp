@@ -30,6 +30,7 @@ public class SftpInboundConfig {
                                 .remoteDirectory(sftpProperties.getRemote().getDirectory())
                                 .regexFilter(sftpProperties.getRemote().getFilter())
                                 .localDirectory(new File(sftpProperties.getLocal().getDirectory()))
+                                .localFilenameExpression(sftpProperties.getLocal().getOutputFileName())
                                 .autoCreateLocalDirectory(true)
                                 .deleteRemoteFiles(false)
                                 .filter(new AcceptOnceFileListFilter<>())

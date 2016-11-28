@@ -63,14 +63,21 @@ public class SftpProperties {
 
 
     public static class RemoteFolderSettings extends FolderSettings {
+        public RemoteFolderSettings() {
+            this.outputFileName = "payload.getName()";
+        }
     }
 
     public static class LocalFolderSettings extends FolderSettings {
+        public LocalFolderSettings() {
+            this.outputFileName = "#this";
+        }
     }
 
     public static class FolderSettings {
         private String directory;
         private String filter = ".*";
+        protected String outputFileName;
 
         public String getDirectory() {
             return directory;
@@ -88,6 +95,13 @@ public class SftpProperties {
             this.filter = filter;
         }
 
+        public String getOutputFileName() {
+            return outputFileName;
+        }
+
+        public void setOutputFileName(String outputFileName) {
+            this.outputFileName = outputFileName;
+        }
     }
 
     public static class PrivateKey{

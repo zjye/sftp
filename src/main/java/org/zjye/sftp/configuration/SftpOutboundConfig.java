@@ -26,7 +26,7 @@ public class SftpOutboundConfig {
                 .from(SftpCommonConfig.OUTPUT_CHANNEL)
                 .handle(Sftp
                                 .outboundAdapter(sftpSessionFactory, FileExistsMode.REPLACE)
-                                .fileNameExpression("payload.getName() + '_foo'")
+                                .fileNameExpression(sftpProperties.getRemote().getOutputFileName())
                                 .remoteDirectory(sftpProperties.getRemote().getDirectory())
                                 .autoCreateDirectory(true)
                         ,
