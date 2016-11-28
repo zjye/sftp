@@ -30,6 +30,7 @@ public class OutboundTransferTest {
     ApplicationContext context;
     @Autowired
     SftpTestUtils sftpTestUtils;
+    final String testDirectory = "local-test-dir";
 
     @Test
     public void should_upload_to_remote_folder() throws Exception {
@@ -37,8 +38,8 @@ public class OutboundTransferTest {
         final String sourceFileName = String.format("%s.txt", UUID.randomUUID().toString());
         final String destinationFileName = sourceFileName + "_foo";
 
-        String sourceFile = Paths.get(sftpProperties.getLocal().getDirectory(), sourceFileName).toString();
-        new File(sftpProperties.getLocal().getDirectory()).mkdir();
+        String sourceFile = Paths.get(testDirectory, sourceFileName).toString();
+        new File(testDirectory).mkdir();
         assertTrue("failed to create test file", new File(sourceFile).createNewFile());
 
         sftpTestUtils.createTestFiles(); // Just the directory
@@ -68,7 +69,7 @@ public class OutboundTransferTest {
     @After
     public void cleanup() {
         try {
-            FileUtils.cleanDirectory(new File(sftpProperties.getLocal().getDirectory()));
+            FileUtils.cleanDirectory(new File(testDirectory));
             FileUtils.cleanDirectory(new File(sftpProperties.getRemote().getDirectory()));
         } catch (Exception ex) {
             System.out.println("failed to cleanup" + ex.getMessage());
