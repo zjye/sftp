@@ -32,6 +32,8 @@ public class OutboundTransferTest {
     SftpProperties sftpProperties;
     @Autowired
     ApplicationContext ac;
+    @Autowired
+    SftpTestUtils sftpTestUtils;
 
     @Test
     public void should_upload_to_remote_folder() throws Exception {
@@ -45,7 +47,7 @@ public class OutboundTransferTest {
         @SuppressWarnings("unchecked")
         SessionFactory<ChannelSftp.LsEntry> sessionFactory = ac.getBean(CachingSessionFactory.class);
         RemoteFileTemplate<ChannelSftp.LsEntry> template = new RemoteFileTemplate<>(sessionFactory);
-        SftpTestUtils.createTestFiles(template, sftpProperties.getRemote()); // Just the directory
+        sftpTestUtils.createTestFiles(template); // Just the directory
 
         final File file = new File(sourceFile);
 
@@ -57,12 +59,12 @@ public class OutboundTransferTest {
         inputChannel.send(message);
         Thread.sleep(2000);
 
-        assertTrue(SftpTestUtils.fileExists(template, sftpProperties.getRemote(), destinationFileName));
+        assertTrue(sftpTestUtils.fileExists(template, destinationFileName));
 
         System.out.println(String.format("Successfully transferred '%s' file to a " +
                 "remote location under the name '%s'", sourceFileName, destinationFileName));
 
-        SftpTestUtils.cleanUp(template, sftpProperties.getRemote(), destinationFileName);
+        sftpTestUtils.cleanUp(template, destinationFileName);
     }
 
 

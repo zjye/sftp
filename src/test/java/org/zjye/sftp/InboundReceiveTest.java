@@ -40,6 +40,9 @@ public class InboundReceiveTest {
     @Autowired
     SftpProperties sftpProperties;
 
+    @Autowired
+    SftpTestUtils sftpTestUtils;
+
     @Test
     public void should_receive_file() {
         RemoteFileTemplate<LsEntry> template;
@@ -53,7 +56,7 @@ public class InboundReceiveTest {
         @SuppressWarnings("unchecked")
         SessionFactory<LsEntry> sessionFactory = context.getBean(CachingSessionFactory.class);
         template = new RemoteFileTemplate<>(sessionFactory);
-        SftpTestUtils.createTestFiles(template, sftpProperties.getRemote(), file1, file2, fileExcluded);
+        sftpTestUtils.createTestFiles(template, file1, file2, fileExcluded);
 
         SourcePollingChannelAdapter adapter = context.getBean(SourcePollingChannelAdapter.class);
         adapter.start();

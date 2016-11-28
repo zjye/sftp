@@ -20,8 +20,10 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import org.springframework.beans.DirectFieldAccessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.file.remote.RemoteFileTemplate;
 import org.springframework.integration.file.remote.SessionCallback;
+import org.springframework.stereotype.Component;
 import org.zjye.sftp.configuration.SftpProperties;
 
 import java.io.ByteArrayInputStream;
@@ -31,9 +33,17 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+@Component
 public class SftpTestUtils {
 
-	static void createTestFiles(RemoteFileTemplate<LsEntry> template, SftpProperties.RemoteFolderSettings remoteFolder, final String... fileNames) {
+    @Autowired
+    private SftpProperties sftpProperties;
+
+    public void createTestFiles(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
+        createTestFiles(template, sftpProperties.getRemote(), fileNames);
+    }
+
+    private void createTestFiles(RemoteFileTemplate<LsEntry> template, SftpProperties.RemoteFolderSettings remoteFolder, final String... fileNames) {
 		if (template != null) {
 			template.execute((SessionCallback<LsEntry, Void>) session -> {
                 try {
@@ -52,7 +62,12 @@ public class SftpTestUtils {
 		}
 	}
 
-	static void cleanUp(RemoteFileTemplate<LsEntry> template, SftpProperties.RemoteFolderSettings remoteFolder, final String... fileNames) {
+
+    public void cleanUp(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
+        cleanUp(template, sftpProperties.getRemote(), fileNames);
+    }
+
+    private void cleanUp(RemoteFileTemplate<LsEntry> template, SftpProperties.RemoteFolderSettings remoteFolder, final String... fileNames) {
 		if (template != null) {
 			template.execute((SessionCallback<LsEntry, Void>) session -> {
                 // TODO: avoid DFAs with Spring 4.1 (INT-3412)
@@ -76,7 +91,11 @@ public class SftpTestUtils {
 		}
 	}
 
-	public static boolean fileExists(RemoteFileTemplate<LsEntry> template, SftpProperties.RemoteFolderSettings remoteFolder, final String... fileNames) {
+	public boolean fileExists(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
+        return fileExists(template, sftpProperties.getRemote(), fileNames);
+    }
+
+	private boolean fileExists(RemoteFileTemplate<LsEntry> template, SftpProperties.RemoteFolderSettings remoteFolder, final String... fileNames) {
 		if (template != null) {
 			return template.execute(session -> {
                 // TODO: avoid DFAs with Spring 4.1 (INT-3412)
