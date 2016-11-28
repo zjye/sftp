@@ -23,6 +23,7 @@ import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.file.remote.RemoteFileTemplate;
 import org.springframework.integration.file.remote.SessionCallback;
+import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.zjye.sftp.configuration.SftpProperties;
 
@@ -38,8 +39,13 @@ public class SftpTestUtils {
 
     @Autowired
     private SftpProperties sftpProperties;
+    @Autowired
+    private SessionFactory<LsEntry> sftpSessionFactory;
 
-    public void createTestFiles(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
+    public void createTestFiles(final String... fileNames) {
+        createTestFiles(new RemoteFileTemplate<>(sftpSessionFactory), sftpProperties.getRemote(), fileNames);
+    }
+    private void createTestFiles(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
         createTestFiles(template, sftpProperties.getRemote(), fileNames);
     }
 
@@ -62,8 +68,11 @@ public class SftpTestUtils {
 		}
 	}
 
+    public void cleanUp(final String... fileNames) {
+        cleanUp(new RemoteFileTemplate<>(sftpSessionFactory), sftpProperties.getRemote(), fileNames);
+    }
 
-    public void cleanUp(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
+    private void cleanUp(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
         cleanUp(template, sftpProperties.getRemote(), fileNames);
     }
 
@@ -91,7 +100,11 @@ public class SftpTestUtils {
 		}
 	}
 
-	public boolean fileExists(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
+    public boolean fileExists(final String... fileNames) {
+        return fileExists(new RemoteFileTemplate<>(sftpSessionFactory), sftpProperties.getRemote(), fileNames);
+    }
+
+    private boolean fileExists(RemoteFileTemplate<LsEntry> template, final String... fileNames) {
         return fileExists(template, sftpProperties.getRemote(), fileNames);
     }
 

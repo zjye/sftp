@@ -1,6 +1,5 @@
 package org.zjye.sftp;
 
-import com.jcraft.jsch.ChannelSftp.LsEntry;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.After;
@@ -13,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.integration.endpoint.SourcePollingChannelAdapter;
-import org.springframework.integration.file.remote.RemoteFileTemplate;
-import org.springframework.integration.file.remote.session.CachingSessionFactory;
-import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -45,7 +41,7 @@ public class InboundReceiveTest {
 
     @Test
     public void should_receive_file() {
-        RemoteFileTemplate<LsEntry> template;
+        // arrange
         String file1 = String.format("%s.txt", UUID.randomUUID().toString());
         String file2 = String.format("%s.txt", UUID.randomUUID().toString());
         String fileExcluded = String.format("%s.aba", UUID.randomUUID().toString());
@@ -53,15 +49,15 @@ public class InboundReceiveTest {
         assertFalse("could not delete existing file", new File(sftpProperties.getLocal().getDirectory(), file2).delete());
 
         PollableChannel localFileChannel = context.getBean("receiveChannel", PollableChannel.class);
-        @SuppressWarnings("unchecked")
-        SessionFactory<LsEntry> sessionFactory = context.getBean(CachingSessionFactory.class);
-        template = new RemoteFileTemplate<>(sessionFactory);
-        sftpTestUtils.createTestFiles(template, file1, file2, fileExcluded);
+        sftpTestUtils.createTestFiles(file1, file2, fileExcluded);
 
         SourcePollingChannelAdapter adapter = context.getBean(SourcePollingChannelAdapter.class);
         adapter.start();
 
+        // act
         Message<?> received = localFileChannel.receive();
+
+        // assert
         assertNotNull(received);
         int count = 1;
         while (received != null) {
