@@ -1,4 +1,8 @@
 package org.zjye.sftp.client;
 
-public class SftpClient {
+import java.io.File;
+
+public interface SftpClient {
+    void upload(File file);
+    File download(String filePath);
 }

@@ -4,3 +4,4 @@ local-dir/
 sftp.iml
 target/
 si.sftp.sample/
+local-out-dir/
