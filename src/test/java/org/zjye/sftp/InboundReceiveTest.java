@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.zjye.sftp.configuration.SftpCommonConfig;
 import org.zjye.sftp.configuration.SftpProperties;
 
 import java.io.File;
@@ -39,7 +40,7 @@ public class InboundReceiveTest {
     SftpTestUtils sftpTestUtils;
 
     @Test
-    public void should_receive_file() {
+    public void should_receive_file() throws Exception {
         // arrange
         String file1 = String.format("%s.txt", UUID.randomUUID().toString());
         String file2 = String.format("%s.txt", UUID.randomUUID().toString());
@@ -47,8 +48,10 @@ public class InboundReceiveTest {
         assertFalse("could not delete existing file", new File(sftpProperties.getLocal().getDirectory(), file1).delete());
         assertFalse("could not delete existing file", new File(sftpProperties.getLocal().getDirectory(), file2).delete());
 
-        PollableChannel localFileChannel = context.getBean("receiveChannel", PollableChannel.class);
+        PollableChannel localFileChannel = context.getBean(SftpCommonConfig.INPUT_CHANNEL, PollableChannel.class);
         sftpTestUtils.createTestFiles(file1, file2, fileExcluded);
+
+        Thread.sleep(1000);
 
         // act
         Message<?> received = localFileChannel.receive();

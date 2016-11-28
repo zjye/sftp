@@ -13,8 +13,13 @@ import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
 @Configuration
 @EnableIntegration
 public class SftpCommonConfig {
+    public final static String INPUT_CHANNEL = "inputChannel";
+    public final static String OUTPUT_CHANNEL = "outputChannel";
+
     @Autowired
     SftpProperties sftpProperties;
+
+
     @Bean
     @ConditionalOnMissingBean
     public int sftpServerPort() {

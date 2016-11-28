@@ -12,6 +12,7 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.zjye.sftp.configuration.SftpCommonConfig;
 import org.zjye.sftp.configuration.SftpProperties;
 
 import java.io.File;
@@ -49,7 +50,7 @@ public class OutboundTransferTest {
         assertTrue(String.format("File '%s' does not exist.", sourceFile), file.exists());
 
         final Message<File> message = MessageBuilder.withPayload(file).build();
-        final MessageChannel inputChannel = context.getBean("inputChannel", MessageChannel.class);
+        final MessageChannel inputChannel = context.getBean(SftpCommonConfig.OUTPUT_CHANNEL, MessageChannel.class);
 
         // act
         inputChannel.send(message);

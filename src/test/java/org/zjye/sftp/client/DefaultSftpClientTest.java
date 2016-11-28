@@ -13,6 +13,7 @@ import org.springframework.messaging.PollableChannel;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.zjye.sftp.SftpTestUtils;
 import org.zjye.sftp.TestContext;
+import org.zjye.sftp.configuration.SftpCommonConfig;
 import org.zjye.sftp.configuration.SftpProperties;
 
 import java.io.File;
@@ -52,8 +53,8 @@ public class DefaultSftpClientTest {
         assertTrue("failed to create test file", localFile.createNewFile());
 
         DefaultSftpClient sftpClient = new DefaultSftpClient(
-                context.getBean("inputChannel", MessageChannel.class),
-                context.getBean("receiveChannel", PollableChannel.class));
+                context.getBean(SftpCommonConfig.OUTPUT_CHANNEL, MessageChannel.class),
+                context.getBean(SftpCommonConfig.INPUT_CHANNEL, PollableChannel.class));
 
         // act
         sftpClient.upload(localFile);
@@ -75,8 +76,8 @@ public class DefaultSftpClientTest {
         sftpTestUtils.createTestFiles(file1, file2, fileExcluded);
 
         DefaultSftpClient sftpClient = new DefaultSftpClient(
-                context.getBean("inputChannel", MessageChannel.class),
-                context.getBean("receiveChannel", PollableChannel.class));
+                context.getBean(SftpCommonConfig.OUTPUT_CHANNEL, MessageChannel.class),
+                context.getBean(SftpCommonConfig.INPUT_CHANNEL, PollableChannel.class));
 
         List<File> downloadedFiles = new ArrayList<>();
 

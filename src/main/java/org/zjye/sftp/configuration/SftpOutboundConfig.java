@@ -14,7 +14,7 @@ import org.springframework.integration.handler.advice.RequestHandlerRetryAdvice;
 
 @Configuration
 @EnableConfigurationProperties({SftpProperties.class})
-public class SftpOutboundTransferConfig {
+public class SftpOutboundConfig {
 
     @Autowired
     SftpProperties sftpProperties;
@@ -23,7 +23,7 @@ public class SftpOutboundTransferConfig {
     public IntegrationFlow sftpOutboundFlow(SessionFactory<ChannelSftp.LsEntry> sftpSessionFactory) {
 
         return IntegrationFlows
-                .from("inputChannel")
+                .from(SftpCommonConfig.OUTPUT_CHANNEL)
                 .handle(Sftp
                                 .outboundAdapter(sftpSessionFactory, FileExistsMode.REPLACE)
                                 .fileNameExpression("payload.getName() + '_foo'")

@@ -16,7 +16,7 @@ import java.io.File;
 
 @Configuration
 @EnableConfigurationProperties({SftpProperties.class})
-public class SftpInboundReceiveConfig {
+public class SftpInboundConfig {
 
     @Autowired
     SftpProperties sftpProperties;
@@ -40,7 +40,7 @@ public class SftpInboundReceiveConfig {
                                         .fixedRate(1000)
                                         .maxMessagesPerPoll(1)
                                 ))
-                .channel(MessageChannels.queue("receiveChannel"))
+                .channel(MessageChannels.queue(SftpCommonConfig.INPUT_CHANNEL))
                 .get();
     }
 }
