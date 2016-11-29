@@ -33,21 +33,6 @@
             <artifactId>spring-integration-java-dsl</artifactId>
             <version>${spring.integration.dsl.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.integration</groupId>-->
-            <!--<artifactId>spring-integration-core</artifactId>-->
-            <!--<version>${spring.integration.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.integration</groupId>-->
-            <!--<artifactId>spring-integration-file</artifactId>-->
-            <!--<version>${spring.integration.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.integration</groupId>-->
-            <!--<artifactId>spring-integration-stream</artifactId>-->
-            <!--<version>${spring.integration.version}</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-sftp</artifactId>
@@ -57,7 +42,7 @@
             <groupId>org.apache.sshd</groupId>
             <artifactId>sshd-core</artifactId>
             <version>0.14.0</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
