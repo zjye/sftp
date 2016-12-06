@@ -46,7 +46,14 @@ public class EmbeddedSftpServer implements InitializingBean, SmartLifecycle {
         this.sftpProperties = sftpProperties;
     }
 
-	public static final int PORT = SocketUtils.findAvailableTcpPort();
+    public int getPort() {
+        if(port == 0) {
+            port = SocketUtils.findAvailableTcpPort();
+        }
+
+        return port;
+    }
+
 
 	private final SshServer server = SshServer.setUpDefaultServer();
 
@@ -62,7 +69,7 @@ public class EmbeddedSftpServer implements InitializingBean, SmartLifecycle {
 	public void afterPropertiesSet() throws Exception {
 		final PublicKey allowedKey = decodePublicKey();
 		this.server.setPublickeyAuthenticator((username, key, session) -> key.equals(allowedKey));
-		this.server.setPort(this.port);
+		this.server.setPort(getPort());
 		this.server.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("hostkey.ser"));
 		this.server.setSubsystemFactories(Collections.singletonList(new SftpSubsystem.Factory()));
 		final String virtualDir = new FileSystemResource("").getFile().getAbsolutePath();
@@ -97,7 +104,7 @@ public class EmbeddedSftpServer implements InitializingBean, SmartLifecycle {
 
 	@Override
 	public boolean isAutoStartup() {
-		return PORT == this.port;
+		return true;
 	}
 
 	@Override

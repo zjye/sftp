@@ -13,16 +13,15 @@ public class SftpTestConfig {
     SftpProperties sftpProperties;
 
     @Bean
-    public EmbeddedSftpServer embeddedSftpServer(int sftpServerPort) {
+    public EmbeddedSftpServer embeddedSftpServer() {
         EmbeddedSftpServer embeddedSftpServer = new EmbeddedSftpServer(sftpProperties);
-        embeddedSftpServer.setPort(sftpServerPort);
+        sftpProperties.setPort(embeddedSftpServer.getPort());
         return embeddedSftpServer;
     }
 
-    @Bean
-    public int sftpServerPort() {
-        if (sftpProperties.getPort() > 0) return sftpProperties.getPort();
 
-        return EmbeddedSftpServer.PORT;
+    @Bean
+    public int sftpServerPort(EmbeddedSftpServer embeddedSftpServer) {
+        return embeddedSftpServer.getPort();
     }
 }
